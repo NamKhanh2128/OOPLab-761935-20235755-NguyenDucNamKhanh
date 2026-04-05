@@ -1,0 +1,37 @@
+1. Constructor Overloading
+Trong Java, nạp chồng phương thức (overloading) dựa vào chữ ký phương thức (số lượng và kiểu dữ liệu tham số).
+Vì cả title và category đều là kiểu String, nên nếu viết:
+public DigitalVideoDisc(String title)
+public DigitalVideoDisc(String category)
+thì trình biên dịch sẽ báo lỗi vì không phân biệt được hai constructor này.
+→ Kết luận: Java không cho phép vì không thỏa mãn điều kiện nạp chồng.
+
+2. Accessor Methods (Getter/Setter)
+Phương thức truy cập được dùng để cho phép các đối tượng khác truy cập và thay đổi các thuộc tính private.
+Điều này giúp:
+- Đảm bảo tính đóng gói (encapsulation)
+- Kiểm soát việc đọc/ghi dữ liệu
+- Tránh lỗi hoặc lạm quyền khi để thuộc tính public
+→ Vì vậy nên sử dụng getter và setter thay vì public trực tiếp.
+
+3. Varargs vs Array Parameter
+Có thể viết phương thức addDigitalVideoDisc với số lượng tham số tùy ý bằng varargs:
+public void addDigitalVideoDisc(DigitalVideoDisc... dvds)
+So với mảng:
+- Không cần tạo mảng trước
+- Cú pháp gọn hơn, dễ dùng hơn
+→ Ưu tiên dùng varargs trong trường hợp này.
+
+4. Swap vs Change Title
+- swap(jungleDVD, cinderellaDVD):
+Java truyền tham số theo cơ chế pass-by-value (truyền giá trị).
+Với object, giá trị được truyền là bản sao của tham chiếu.
+Trong hàm swap, việc hoán đổi chỉ xảy ra với các tham chiếu bản sao, không ảnh hưởng đến tham chiếu bên ngoài.
+→ Vì vậy sau khi gọi hàm, hai object không bị đổi.
+
+- changeTitle(jungleDVD, cinderellaDVD.getTitle()):
+Tham chiếu truyền vào vẫn trỏ đến cùng một object thật.
+Khi thay đổi title, là thay đổi trực tiếp dữ liệu của object đó.
+→ Vì vậy sau khi gọi hàm, title của jungleDVD bị thay đổi.
+→ swap không làm thay đổi object
+→ changeTitle làm thay đổi object vì tác động trực tiếp vào dữ liệu
