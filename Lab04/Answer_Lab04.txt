@@ -1,0 +1,70 @@
+Câu hỏi 1: Lớp nào nên implement interface Comparable?
+Lớp Media nên là lớp thực thi (implement) interface Comparable<Media>.
+
+Lý do:
+Vì tất cả các loại phương tiện (như Book, DigitalVideoDisc, CompactDisc) đều kế thừa từ lớp cha Media, việc implement Comparable tại lớp cha sẽ giúp định nghĩa một "thứ tự sắp xếp tự nhiên" (natural ordering) mặc định và nhất quán cho toàn bộ các loại media khi chúng được đặt chung trong một giỏ hàng (cart).
+
+public abstract class Media implements Comparable<Media> {
+    // Các thuộc tính cơ bản: id, title, category, cost
+    protected int id;
+    protected String title;
+    protected String category;
+    protected float cost;
+    
+    // ... Constructors, Getters, Setters ...
+}
+Câu hỏi 2: Cài đặt phương thức compareTo() như thế nào để phản ánh thứ tự mong muốn?
+Giả sử quy tắc sắp xếp mặc định là: Sắp xếp theo tiêu đề (title) theo bảng chữ cái; nếu tiêu đề giống nhau thì tiếp tục sắp xếp theo giá (cost) giảm dần. Bạn sẽ ghi đè (override) phương thức compareTo() bên trong lớp Media như sau:
+
+@Override
+public int compareTo(Media other) {
+    // 1. So sánh theo title (thứ tự từ điển)
+    int titleCompare = this.title.compareTo(other.title);
+    
+    if (titleCompare != 0) {
+        return titleCompare; // Trả về kết quả nếu title khác nhau
+    }
+    
+    // 2. Nếu title giống nhau, so sánh theo cost giảm dần.
+    // Lưu ý: Đảo vị trí other.cost và this.cost để sắp xếp giảm dần thay vì tăng dần.
+    return Float.compare(other.cost, this.cost);
+}
+Giải thích: Phương thức compareTo() của class String xử lý việc sắp xếp bảng chữ cái. Trong khi đó, Float.compare(other.cost, this.cost) giúp đảo ngược thứ tự so sánh, đưa các media có giá trị cao hơn lên trước.
+
+Câu hỏi 3: Có thể có hai quy tắc sắp xếp (theo title rồi cost, và theo cost rồi title) nếu chỉ dùng phương pháp Comparable không?
+Không thể (hoặc nói chính xác hơn là không hợp lý).
+
+Lý do:
+Interface Comparable và phương thức compareTo() được thiết kế để chỉ định nghĩa một quy tắc sắp xếp mặc định duy nhất (natural ordering) cho một đối tượng.
+
+Nếu hệ thống yêu cầu linh hoạt với nhiều tiêu chí sắp xếp khác nhau trên cùng một tập dữ liệu, phương pháp chuẩn mực là sử dụng interface Comparator. Comparator cho phép bạn tạo ra vô số các bộ quy tắc so sánh mà không cần can thiệp vào mã nguồn gốc của lớp Media.
+
+Ví dụ định nghĩa bằng Comparator:
+
+// Quy tắc 1: Sắp xếp theo Title (tăng dần), sau đó đến Cost (giảm dần)
+Comparator<Media> compareByTitleCost = Comparator
+        .comparing(Media::getTitle)
+        .thenComparing(Comparator.comparing(Media::getCost).reversed());
+
+// Quy tắc 2: Sắp xếp theo Cost (giảm dần), sau đó đến Title (tăng dần)
+Comparator<Media> compareByCostTitle = Comparator
+        .comparing(Media::getCost).reversed()
+        .thenComparing(Media::getTitle);
+Câu hỏi 4: Giả sử DVD có quy tắc sắp xếp riêng (theo title, chiều dài giảm dần, rồi đến giá). Cần sửa code thế nào để cho phép điều này?
+Vì DVD có tiêu chí sắp xếp đặc thù liên quan đến thuộc tính length (thuộc tính mà lớp Media cha không có), ta không nên sửa đổi phương thức compareTo() của lớp Media.
+
+Thay vào đó, cách tiếp cận chuẩn mực là tạo ra một Comparator riêng biệt dành riêng cho lớp DigitalVideoDisc.
+
+Comparator<DigitalVideoDisc> dvdComparator = Comparator
+        .comparing(DigitalVideoDisc::getTitle)
+        .thenComparing(Comparator.comparing(DigitalVideoDisc::getLength).reversed())
+        .thenComparing(DigitalVideoDisc::getCost);
+Cách hoạt động của Comparator này:
+
+Đầu tiên, sắp xếp theo title (A-Z).
+
+Nếu title trùng nhau, chuyển sang sắp xếp theo length (chiều dài giảm dần nhờ .reversed()).
+
+Nếu cả length cũng trùng nhau, tiêu chí cuối cùng là sắp xếp theo giá cost (tăng dần mặc định).
+
+Cách làm này đảm bảo tính đóng gói (encapsulation), giúp mỗi loại media có thể có bộ quy tắc xử lý linh hoạt riêng mà không làm phá vỡ logic kế thừa chung của hệ thống.
