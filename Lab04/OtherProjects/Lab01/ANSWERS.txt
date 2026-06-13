@@ -1,0 +1,36 @@
+LAB 01 ANSWERS 
+Nguyen Duc Nam Khanh-20235755
+
+Q1: What happens if users choose “Cancel”?
+
+If the user chooses "Cancel" or closes the dialog box, the method JOptionPane.showConfirmDialog() returns an integer value of 2, which corresponds to the constant JOptionPane.CANCEL_OPTION. 
+
+In the provided code, the program uses a ternary operator: 
+(option == JOptionPane.YES_OPTION ? "Yes" : "No")
+
+Since the returned value (2) is not equal to JOptionPane.YES_OPTION (0), the condition is false. Therefore, the program will execute the false branch and print: "You've chosen: No".
+
+Q2: How to customize the options to users, e.g., only two options: “Yes” and “No”, OR “I do” and “I don’t”?
+
+Based on the Javadocs, we can customize the options by passing additional parameters to the JOptionPane methods.
+
+1. To display only two options ("Yes" and "No"):
+We still use the showConfirmDialog method, but we need to add the "optionType" parameter as JOptionPane.YES_NO_OPTION.
+Example:
+int option = JOptionPane.showConfirmDialog(null, 
+    "Do you want to change to the first class ticket?", 
+    "Confirmation", 
+    JOptionPane.YES_NO_OPTION);
+
+2. To display custom text options ("I do" and "I don't"):
+We cannot use showConfirmDialog anymore. Instead, we must use the more general method showOptionDialog() and pass an array of Strings containing our custom texts into the "options" parameter.
+Example:
+Object[] options = {"I do", "I don't"};
+int option = JOptionPane.showOptionDialog(null,
+    "Do you want to change to the first class ticket?",
+    "Custom Options",
+    JOptionPane.YES_NO_OPTION,
+    JOptionPane.QUESTION_MESSAGE,
+    null,
+    options,
+    options[0]);

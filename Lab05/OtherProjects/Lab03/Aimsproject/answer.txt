@@ -1,0 +1,15 @@
+Is JAVA a Pass by Value or a Pass by Reference programming language?
+
+
+Java là ngôn ngữ lập trình sử dụng cơ chế truyền tham trị (pass by value).
+
+Điều này có nghĩa là khi truyền tham số vào hàm, Java sẽ tạo ra một bản sao của giá trị rồi truyền vào, chứ không truyền trực tiếp biến gốc.
+
+Đối với kiểu dữ liệu nguyên thủy (int, float, boolean,…): giá trị được sao chép nên nếu thay đổi trong hàm thì không ảnh hưởng đến biến ban đầu.
+
+Đối với đối tượng: Java vẫn truyền theo kiểu pass by value, nhưng giá trị được truyền là địa chỉ tham chiếu của đối tượng. Vì vậy:
+
+  (1)Có thể thay đổi dữ liệu bên trong đối tượng.
+  (2)Nhưng nếu gán đối tượng sang một đối tượng mới trong hàm thì không làm thay đổi đối tượng ban đầu.
+
+=> Kết luận: Java không phải pass by reference, mà luôn là pass by value, chỉ khác ở chỗ giá trị truyền đi có thể là giá trị thường hoặc giá trị tham chiếu.

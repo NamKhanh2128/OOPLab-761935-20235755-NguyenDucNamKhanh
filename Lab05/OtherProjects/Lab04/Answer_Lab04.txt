@@ -1,0 +1,77 @@
+Question 1: Alternatively, to compare items in the cart, instead of using Comparator, we can use the Comparable interface and override the compareTo()method. You can refer to the Java docs to see the information of this interface.
+Suppose we are taking this Comparable interface approach.
+What class should implement the Comparable interface?
+
+Lớp Media nên implement Comparable<Media>.
+Lý do: tất cả các loại media như Book, DigitalVideoDisc, CompactDisc đều kế thừa từ Media.
+Việc implement Comparable trong lớp Media sẽ tạo ra một thứ tự mặc định chung cho tất cả media trong cart.
+
+public abstract class Media implements Comparable<Media> 
+{
+    // fields: id, title, category, cost
+}
+
+
+
+
+
+Question 2: In those classes, how should you implement the compareTo()method be to reflect the ordering that we want?
+
+Giả sử muốn sắp xếp theo title, nếu title giống nhau thì sắp xếp theo cost giảm dần:
+@Override
+public int compareTo(Media other) {
+    int titleCompare =
+            this.title.compareTo(other.title);
+    if (titleCompare != 0) {
+        return titleCompare;
+    }
+    return Float.compare(other.cost, this.cost);
+}
+compareTo() của String giúp sắp xếp alphabet theo title.
+Float.compare(other.cost, this.cost) giúp media có cost lớn hơn đứng trước.
+
+
+
+
+
+
+Question 3: Can we have two ordering rules of the item (by title then cost and by cost then title) if we use this Comparable interface approach?
+
+Không thuận tiện vì Comparable chỉ hỗ trợ một quy tắc sắp xếp mặc định thông qua compareTo().
+Nếu muốn nhiều cách sắp xếp khác nhau thì nên dùng Comparator.
+Ví dụ:
+Comparator<Media> byTitleCost =
+        Comparator.comparing(Media::getTitle)
+                .thenComparing(
+                        Comparator.comparing(Media::getCost)
+                                .reversed());
+Comparator<Media> byCostTitle =
+        Comparator.comparing(Media::getCost)
+                .reversed()
+                .thenComparing(Media::getTitle);
+Comparator linh hoạt hơn vì có thể tạo nhiều quy tắc sắp xếp cho cùng một lớp.
+
+
+
+
+
+
+Question 4: Suppose the DVDs has a different ordering rule from the other media types, that is by title, then decreasing length, then cost. How would you modify your code to allow this?
+
+Ta nên tạo một Comparator riêng cho DigitalVideoDisc.
+Ví dụ:
+Comparator<DigitalVideoDisc> dvdComparator =
+        Comparator.comparing(
+                DigitalVideoDisc::getTitle)
+        .thenComparing(
+                Comparator.comparing(
+                        DigitalVideoDisc::getLength)
+                        .reversed())
+        .thenComparing(
+                DigitalVideoDisc::getCost);
+Comparator này sẽ:
+sắp xếp theo title
+nếu title giống nhau thì length giảm dần
+nếu length giống nhau thì so sánh cost
+Cách này giúp mỗi loại media có thể có quy tắc sắp xếp riêng mà không ảnh hưởng tới các lớp khác.
+
